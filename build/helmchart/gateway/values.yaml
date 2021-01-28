@@ -1,0 +1,90 @@
+# Default values for gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: docker.io/tinnt/triton-grpc-gateway
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets:
+  - name: hub.docker.com
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: 	arn:aws:acm:us-west-2:487040394650:certificate/95985e6b-b7be-4266-962a-3aacc1418cb7
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+  hosts:
+    - paths:
+      - path: /*
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secrets:
+  pki:
+    cert: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQxakNDQXI2Z0F3SUJBZ0lRS1RScWRPcEx6cGs1Y25rdVNpZG5hekFOQmdrcWhraUc5dzBCQVFzRkFEQ0IKZ3pFTE1Ba0dBMVVFQmhNQ1JsSXhJREFlQmdOVkJBb01GM1J5YVhSdmJpMTBjbUZ1YzNCaGNtVnVZM2t1WTI5dApNUlF3RWdZRFZRUUxEQXRGYm1kcGJtVmxjbWx1WnpFT01Bd0dBMVVFQ0F3RlVHRnlhWE14SERBYUJnTlZCQU1NCkUzUnlhWFJ2YmkxMGNtRnVjM0JoY21WdVkza3hEakFNQmdOVkJBY01CVkJoY21sek1CNFhEVEl4TURFeU1ERTAKTlRVeU1sb1hEVEl5TURJeU1ERTFOVFV5TWxvd0pERWlNQ0FHQTFVRUF3d1pLaTUwY21sMGIyNHRkSEpoYm5OdwpZWEpsYm1ONUxtTnZiVENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLekJlcnhaClM4SnU5aHMvV2toanU4NE5KUXd5WlUyV1ByZDgzRWpLUHlBZDFvT2g5SThDZlFOOUs0NkdaMGFzejIranluY1IKZFZET1hMUW5jV3FnR05MMytvQW81cmppVWowMmsrWVZGQXUvV0dFakMrV3BGSDBFQ2RLdy95NWNDMVZ2SVVBRQpPY2x3ZVgrbDNXdTRBa2pmZ2U3Zkt5N1IyYUlWeUpQNUxEK1BzWDVoaDRWUzRCblo5R25ocHdnb1hRVG9hOTlkCmoxMVovb3hVNjE4ZkJBeVQzN2xHRkRBV0w0a09zSm5JeERicXdDMkt2Zk8wRzNQMWNMSTlmaHVkNTRsNjN2SVkKQ3k3TmtOejdScnoxMUV5Z3JWSDlseHZyamp4TU1NTzdJN3A3dTQzTmt4TUlsdms4RmlKbGRUNTFNaG1JS2gybQpxRjcrMUlmcFlXTklWVkVDQXdFQUFhT0JvekNCb0RBa0JnTlZIUkVFSFRBYmdoa3FMblJ5YVhSdmJpMTBjbUZ1CmMzQmhjbVZ1WTNrdVkyOXRNQWtHQTFVZEV3UUNNQUF3SHdZRFZSMGpCQmd3Rm9BVXRlLzczM013Wlc1djBSeEYKekhRNVhFeldReGN3SFFZRFZSME9CQllFRkcyMUxiOXl5SWJUTjhmTHRwcnFsOFdRRXl1eU1BNEdBMVVkRHdFQgovd1FFQXdJRm9EQWRCZ05WSFNVRUZqQVVCZ2dyQmdFRkJRY0RBUVlJS3dZQkJRVUhBd0l3RFFZSktvWklodmNOCkFRRUxCUUFEZ2dFQkFGSE9tUUpTd1FJSy9KN0F3a1UvNGJ4VU9ma09LOE5mUGVnMnkrZHhqaEYxVzRsdWN5a2kKQm02ejk0Z0NYMGcyYW02eUp6dXRhTFpNNXNwSy9nanFocUNnUzNNcExYbldVYTRoVkZ0YXlsNXlmOGgxZ2NQOQppRnQzR1FEZXVzU1htQmVxNE5SQjB4V0xobGNXOURVcHZlUzVEaVNqMnZyYW5KM1lmWkRUcGpNNlNhQ1g4SS9mCmo3Tm1JNlNQWXJqYnF2M2EzK2FNWWxxNXFuUU5rVm1ueW51Tk91UGhFbTlyckJRaVJYdnFIMUJZV21GQzZ1T3UKKy9GU0tJQ3J2cVRwZ253N013Y1lsVGxOUmpjeFVPbWU5NDJmampjMWtIY09GV1FKdURvSnFLaGkwVEJSczRhMQo5cEZsRlcyVFJaTXNYKzVIYjA1K2NzQWQxbVhYZzdIcGgvQT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==
+    key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBck1GNnZGbEx3bTcyR3o5YVNHTzd6ZzBsRERKbFRaWSt0M3pjU01vL0lCM1dnNkgwCmp3SjlBMzByam9ablJxelBiNlBLZHhGMVVNNWN0Q2R4YXFBWTB2ZjZnQ2ptdU9KU1BUYVQ1aFVVQzc5WVlTTUwKNWFrVWZRUUowckQvTGx3TFZXOGhRQVE1eVhCNWY2WGRhN2dDU04rQjd0OHJMdEhab2hYSWsva3NQNCt4Zm1HSApoVkxnR2RuMGFlR25DQ2hkQk9ocjMxMlBYVm4rakZUclh4OEVESlBmdVVZVU1CWXZpUTZ3bWNqRU51ckFMWXE5Cjg3UWJjL1Z3c2oxK0c1M25pWHJlOGhnTExzMlEzUHRHdlBYVVRLQ3RVZjJYRyt1T1BFd3d3N3NqdW51N2pjMlQKRXdpVytUd1dJbVYxUG5VeUdZZ3FIYWFvWHY3VWgrbGhZMGhWVVFJREFRQUJBb0lCQUVOUXpRT1JoQXpLY2dtaQpBUXNPR2NNcnFoRDduaS9DYU1QVTJuMWVtWVJwUEFwazFFZlpmMThacWh4S1VQbmdJcUJzNFZyT0tibUgvK1dQCkxRbVFRcndLTnNrenB0dktES09mbmJmYzVNZkRFcXdmSE9hcm9Ma3FGcTNMbkZPek9CTmRUMGFEbndUWVYrK2UKY1E0bFVIYVc2U2xzT29adTdPL1VyeWpCd2pVdG95Nkg1LzJEeFFPZ3hNRnZ6MFlWYzlGaHYzcDV6cExLRVZrTQpxR0VtTVdJWWZsWHBXdkNRbzJKS1VPS1puOVlFYjQvNXgxVnBzS2hNU2JHdlpOUEFWcTFxUDh3TW1NdVNPaktkCnM0SWpyZzV6Zkp6MVBwV0JrNDBUNUowcDArUmUrMUY1YXIwWEhGek1oUzJyNFMzRGd5eTk0ZXM0NnhvcDhsdTgKandxSlJhVUNnWUVBNXZUS04ycDJtY21yUUJxNU5NWHBXOHpXZE1qYnNpaGN3YjZKM2tlVm1uZGRubWxuc2paQwo4Qk9mdTZKM0praTliMGhzVld5TThtSTUxTGc3RFlRWXdiUGpFL0Y5Q1crK0cwRjRzejJKZFI3dUd0aDAyM0Y5ClVZWlIxUjV1M2dpeEZ6a0FyK29UMStzajl5bVI1TUx2eU5YS25QbUpuM1FTVWZ1VXNTUnJkVzhDZ1lFQXYzMFUKVTBuZVdDN25HQ0lBVDNsbmsxbXRYbmhZWHhuR25KazBKVDVKVWNMbjFud3J1WHRsOVo0aTk5Z1JHcElaQXA1RgpZWkdqZHpPZ2Rtb1lNQzZSOXcwN0NGY2YzWWFIOHI4Nm5pcGtablNCb1k2eWx6Vmhobm5Rd2pwQ2xuM0k2N2p0CjdUQ0pSR3lXZ3lMMW84WUhENVRVVks1YThhWkxZMkozOTY0dkFUOENnWUVBNEFuYUY4T281U29pZTM3dzVtYU8KSnNVZnpBNEVRR0N6Q2lhaGF3U1o5VXVSZjFmVWhhWHBiU1k4THpJOHp1Q0ZFdXg0V3EyQVZLaEFYVCtSMlZ5bwovMDVYRzBPSS9aeHVGOVo5RmJLK0l1VXNLTktOR1VxUVBJTkY0cTB3OHlZUFUrMng0dlA0NTkxcitCbFZNMHArCmZKNFhmQXI5RzdibkJxdzc0MUxuQXZVQ2dZQU9Mcjl3bzhuNkVnOC90RlQ5amVwaitZSmp1dG9nd1JINnkwWVgKZEJPT0lMZDNKVjgvcjZvUGxSVFY4b1RoeU94ZFMwZXNRRk14SXZ2QmlYNGRJM1hnTEhTdzIzTWF2em9XZXA5bQowNUQ0SGF6MFFGTnQ2NkE3aTQ0d3RJdjJCWDc2Sm9wSXhRMkZxZDFEL1RUZ1dteHZkUUI4L1NUelBQUGNlcENVCklheU5sUUtCZ0greFN4N29lVXB2bUtMNkpBQ1k1K0Q2N2RoVmd5dDJLbWFkdUJnNlJQWURJRkFYSVNLWXdISVcKZWswTEt1MlZGKzJDMkUzMlJZcFc3a3RqTHFFb3VjaTFOWjUrYVFrVitGSnREWlJWQTlUeUdWanlZbHpuZXpKeApLQmRJRTF5c3RaOHp4MWYvb0d1aVh4enBiOVZkWjNYUEdiQnF0ZyswWDF5L2xpODd3Q1AvCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0t
