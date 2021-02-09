@@ -47,7 +47,7 @@ func run() error {
 		grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)),
 	}
 
-	err = internalgrpc.RegisterUAAServiceHandlerFromEndpoint(ctx, gwmux, "uaa.staging.triton-transparency.com:443", opts)
+	err = internalgrpc.RegisterUAAServiceHandlerFromEndpoint(ctx, gwmux, "uaa.development.triton-transparency.com:443", opts)
 	//fmt.Println(opts)
 	//err = internalgrpc.RegisterUAAServiceHandlerFromEndpoint(ctx, gwmux, "localhost:8081", []grpc.DialOption{grpc.WithInsecure()})
 	if err != nil {
