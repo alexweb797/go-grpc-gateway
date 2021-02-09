@@ -49,7 +49,7 @@ ingress:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/certificate-arn: 	arn:aws:acm:us-west-2:487040394650:certificate/95985e6b-b7be-4266-962a-3aacc1418cb7
+    alb.ingress.kubernetes.io/certificate-arn: 	arn:aws:acm:us-west-2:487040394650:certificate/9e3ebb1c-57f4-4043-9892-b361fe008bf4
     alb.ingress.kubernetes.io/backend-protocol: HTTP
   hosts:
     - paths:
